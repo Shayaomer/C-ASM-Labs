@@ -8,7 +8,8 @@ BEGIN {
 }
 
 {
-    if (FNR >= 51 && FNR <= 71){
+    if (FNR != 1){
+        print "Actor Name: "$4
         printf "Movie Name: "
         for(i=5; i <= NF; i++) 
             if(i > 5)  
@@ -16,6 +17,9 @@ BEGIN {
             else
                 printf$i
         printf "\n"
+        print "------------------------"
+    } else{
+        print "------------------------"
     }
-    
+        
 }
