@@ -9,6 +9,8 @@ BEGIN{
 }
 
 {
+    if (NR == 1)
+        next
     if ($6 >= 80 && $7 >= 80 && $8 >= 80){
         std_bach ++
         $1 = sprintf("%-10s", $1)
