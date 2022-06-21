@@ -59,6 +59,7 @@
 
 	section .bss
     file_buffer: resb 4 
+	fd: resb 4
 
 	section .text
 _start:	
@@ -79,6 +80,11 @@ _start:
 	write 1, OutStr, 31		
 	jmp VirusExit
 
+	;append virus string to FileName
+	
+
+	
+
 
 
 error: 
@@ -92,6 +98,7 @@ VirusExit:
 FileName:	db "ELFexec2short", 0
 OutStr:		db "The lab 9 proto-virus strikes!", 10, 0
 Failstr:        db "perhaps not", 10 , 0
+DirPath:	db "home/usr/Labs/C-ASM-Labs/Lab9", 0
 	
 
 get_my_loc:

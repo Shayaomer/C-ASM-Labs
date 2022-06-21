@@ -1,0 +1,7 @@
+;close [fd]
+;open FileName, 0401, 0777
+;cmp eax, 0
+;jl error
+;mov [fd], eax
+;write [fd], OutStr, 31
+;close [fd]
