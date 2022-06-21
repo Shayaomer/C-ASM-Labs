@@ -50,8 +50,15 @@
 %define	PHDR_vaddr	8
 %define ELFHDR_size 52
 %define ELFHDR_phoff	28
+
+
 	
 	global _start
+
+	elf_string db 0x7f,'ELF'
+
+	section .bss
+    file_buffer: resb 4 
 
 	section .text
 _start:	
@@ -59,17 +66,30 @@ _start:
 	mov	ebp, esp
 	sub	esp, STK_RES            ; Set up ebp and reserve space on the stack for local storage
 	;CODE START
-	
+	open FileName, RDWR, 0777  
+	cmp eax, 0		;check if open succeed
+	jl error
+	read eax, file_buffer, 4
+	cmp eax, -1		;check if read succeed
+	jl error
+	mov esi, [file_buffer]	;make the compare to check if it's ELF file or not
+	mov edi, [elf_string]
+	cmp dword esi, edi
+	jnz error
+	write 1, OutStr, 31		
+	jmp VirusExit
 
 
 
-
+error: 
+	write 1, Failstr, 12
+	jmp VirusExit
 
 VirusExit:
        exit 0            ; Termination if all is OK and no previous code to jump to
                          ; (also an example for use of above macros)
 	
-FileName:	db "ELFexec1", 0
+FileName:	db "ELFexec2short", 0
 OutStr:		db "The lab 9 proto-virus strikes!", 10, 0
 Failstr:        db "perhaps not", 10 , 0
 	
